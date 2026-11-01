@@ -1,0 +1,1 @@
+{ "name": "Pirk", "short_name": "Pirk", "start_url": ".", "scope": ".", "display": "standalone", "background_color": "#f5f4ef", "theme_color": "#3a2bff", "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }] }
