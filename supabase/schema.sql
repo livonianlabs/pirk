@@ -143,8 +143,8 @@ $$;
 create function handle_new_user() returns trigger
 language plpgsql security definer set search_path = public as $$
 begin
-  insert into profiles (id, display_name)
-  values (new.id, coalesce(nullif(split_part(new.email, '@', 1), ''), 'Lietotājs'));
+  -- Never derive the public name from the email address.
+  insert into profiles (id) values (new.id);
   return new;
 end $$;
 create trigger on_auth_user_created after insert on auth.users

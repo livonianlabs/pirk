@@ -52,7 +52,7 @@ await q(ADMIN, `select moderate_ad($1,true)`, [ad.id]);
 ok('approved ad visible to anon', (await q(null, 'select * from ads')).length === 1);
 
 const s1 = (await q(null, `select search_ads(p_q => 'bmw riga', p_max => 6000) r`))[0].r;
-ok('search: diacritics-insensitive + price', s1.total === 1 && s1.items[0].owner_name === 'alice');
+ok('search: diacritics-insensitive + price', s1.total === 1 && s1.items[0].owner_name === 'Lietotājs');
 ok('search hides internal search_text', !('search_text' in s1.items[0]));
 ok('search: price filter excludes', (await q(null, `select search_ads(p_max => 100) r`))[0].r.total === 0);
 

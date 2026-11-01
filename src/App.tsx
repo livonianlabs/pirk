@@ -244,7 +244,7 @@ function AdPage() {
             <small>{t('comparedWith')} {ins.n} {t('comparables')} {money(ins.median, '')}</small></div>}
           {mine ? <div className="note">{t('yourAd')} · <Link to={`/post/${ad.id}`}>{t('edit')}</Link></div> : <>
             {ad.showPhone && (phone ? <a className="btn btn-primary btn-full" href={`tel:${phone.replace(/\s/g, '')}`}>{phone}</a>
-              : <button className="btn btn-primary btn-full" onClick={async () => { if (!user) return nav('/cabinet'); setPhone(await api.revealPhone(ad.id)); }}>{user ? t('showPhone') : t('loginToSee')}</button>)}
+              : <button className="btn btn-primary btn-full" onClick={async () => { if (!user) return nav('/cabinet'); const p = await api.revealPhone(ad.id); if (p) setPhone(p); else toast(t('noPhone')); }}>{user ? t('showPhone') : t('loginToSee')}</button>)}
             <button className="btn btn-ghost btn-full" onClick={contact}>{t('write')}</button></>}
           <div className="buy-row">
             <button className="btn btn-ghost" aria-pressed={fav} onClick={() => toggleFav(ad.id)}>{fav ? '♥' : '♡'} {t('favorites')}</button>
