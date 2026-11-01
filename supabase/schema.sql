@@ -403,3 +403,6 @@ grant select on profiles, ads, prices, price_changes to anon;
 grant insert on reports to anon;
 grant select, insert, update, delete on all tables in schema public to authenticated;
 grant usage on all sequences in schema public to authenticated;
+
+-- Explicit, so the schema works when the project does not auto-expose new objects.
+grant execute on function is_admin(), is_banned(), search_ads(text,text,text,text,numeric,numeric,jsonb,boolean,text,integer,integer), reveal_phone(uuid), add_view(uuid), apply_boost(uuid,text), moderate_ad(uuid,boolean,text), set_ban(uuid,boolean) to anon, authenticated;
