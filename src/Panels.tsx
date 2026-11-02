@@ -102,9 +102,9 @@ export function Admin() {
   const { t } = useT(); const { user } = useApp();
   if (!user) return <Login />;
   if (user.role !== 'admin') return <div className="wrap"><Empty title={t('noAccess')} /></div>;
-  const items: [string, Key][] = [['', 'overview'], ['queue', 'aQueue'], ['reports', 'aReports'], ['users', 'aUsers'], ['prices', 'aPrices'], ['revenue', 'aRevenue'], ['audit', 'aAudit']];
+  const items: [string, Key][] = [['', 'overview'], ['queue', 'aQueue'], ['bot', 'aBot'], ['reports', 'aReports'], ['users', 'aUsers'], ['prices', 'aPrices'], ['revenue', 'aRevenue'], ['audit', 'aAudit']];
   return <div className="wrap dash"><nav className="dash-nav">{items.map(([p, k]) => <NavLink key={p} to={`/admin/${p}`} end={p === ''}>{t(k)}</NavLink>)}</nav><div className="dash-main"><Routes>
-    <Route index element={<AdminHome />} /><Route path="queue" element={<Queue />} /><Route path="reports" element={<Reports />} /><Route path="users" element={<Users />} /><Route path="prices" element={<Prices />} /><Route path="revenue" element={<Revenue />} /><Route path="audit" element={<Audit />} />
+    <Route index element={<AdminHome />} /><Route path="queue" element={<Queue />} /><Route path="bot" element={<Bot />} /><Route path="reports" element={<Reports />} /><Route path="users" element={<Users />} /><Route path="prices" element={<Prices />} /><Route path="revenue" element={<Revenue />} /><Route path="audit" element={<Audit />} />
   </Routes></div></div>;
 }
 function AdminHome() {
@@ -127,9 +127,23 @@ function Queue() {
   const { t, l: _l } = useT(); const { toast } = useApp(); const { data, reload } = useData(() => api.queue()); const [rej, setRej] = useState<Record<string, string>>({}); void _l;
   const act = async (id: string, ok: boolean) => { try { await api.moderate(id, ok, rej[id]); reload(); } catch { toast(t('error')); } };
   return <><h1>{t('aQueue')} <span className="muted">{data?.length ?? ''}</span></h1>{data && !data.length ? <Empty title={t('queueEmpty')} /> : <div className="rows">{data?.map((a) => <div className="row row-mod" key={a.id}>
-    <img src={cover(a)} alt="" /><div className="row-main"><strong>{a.title}</strong><div>{money(a.price, t('negotiable'))} · {a.city} · {a.ownerName}</div><p className="muted">{a.description}</p>
+    <img src={cover(a)} alt="" /><div className="row-main"><strong>{a.title}</strong><div>{money(a.price, t('negotiable'))} · {a.city} · {a.ownerName}</div>{a.botNote && <div className="reject">{t('holdReason')}: {a.botNote}</div>}<p className="muted">{a.description}</p>
       <input placeholder={t('rejectReason')} aria-label={t('rejectReason')} value={rej[a.id] ?? ''} onChange={(e) => setRej({ ...rej, [a.id]: e.target.value })} /></div>
     <div className="row-act"><button className="btn btn-sm btn-accent" onClick={() => act(a.id, true)}>{t('approve')}</button><button className="btn btn-sm btn-danger" disabled={!rej[a.id]?.trim()} onClick={() => act(a.id, false)}>{t('reject')}</button></div></div>)}</div>}</>;
+}
+function Bot() {
+  const { t, lang } = useT(); const { toast } = useApp();
+  const { data: on, reload: reOn } = useData(() => api.botEnabled()); const { data: rules, reload: reRules } = useData(() => api.botRules()); const { data: ads, reload: reAds } = useData(() => api.adminAds());
+  const [p, setP] = useState(''); const [r, setR] = useState(''); const [why, setWhy] = useState<Record<string, string>>({});
+  const run = async (fn: () => Promise<unknown>, after: () => unknown) => { try { await fn(); after(); } catch { toast(t('error')); } };
+  if (api.demo) return <><h1>{t('aBot')}</h1><Empty title={t('demoNoBot')} /></>;
+  const recent = (ads ?? []).filter((a) => a.modSource === 'bot' && a.status === 'active').slice(0, 20);
+  return <><h1>{t('aBot')}</h1>
+    <div className="panel"><div className="sec-head"><strong>{on ? t('botOn') : t('botOff')}</strong>{on != null && <button className="btn btn-sm" onClick={() => run(() => api.setBotEnabled(!on), reOn)}>{on ? t('disable') : t('enable')}</button>}</div><p className="muted">{t('botLimit')}</p></div>
+    <h2>{t('botRecent')}</h2>{ads && !recent.length ? <p className="muted">{t('queueEmpty')}</p> : <div className="rows">{recent.map((a) => <div className="row" key={a.id}><img src={cover(a)} alt="" /><div className="row-main"><Link to={`/ad/${a.id}`}><strong>{a.title}</strong></Link><div className="muted">{money(a.price, t('negotiable'))} · {fmtDate(a.createdAt, lang)}</div><input aria-label={t('rejectReason')} placeholder={t('rejectReason')} value={why[a.id] ?? ''} onChange={(e) => setWhy({ ...why, [a.id]: e.target.value })} /></div><div className="row-act"><button className="btn btn-sm btn-danger" disabled={!why[a.id]?.trim()} onClick={() => run(() => api.moderate(a.id, false, why[a.id]), reAds)}>{t('reject')}</button></div></div>)}</div>}
+    <h2>{t('rules')}</h2>
+    <form className="panel" onSubmit={(e) => { e.preventDefault(); run(() => api.addBotRule(p.trim(), r.trim()), () => { setP(''); setR(''); reRules(); }); }}><div className="form-2"><label>{t('pattern')}<input required value={p} onChange={(e) => setP(e.target.value)} /></label><label>{t('reason')}<input required value={r} onChange={(e) => setR(e.target.value)} /></label></div><button className="btn btn-primary">{t('add')}</button></form>
+    <div className="rows">{rules?.map((x) => <div className="row" key={x.id}><div className="row-main"><strong>{x.reason}</strong><div className="muted rule-code">{x.pattern}</div></div><div className="row-act"><button className="btn btn-sm" onClick={() => run(() => api.deleteBotRule(x.id), reRules)}>{t('delete')}</button></div></div>)}</div></>;
 }
 function Reports() {
   const { t, lang } = useT(); const { data, reload } = useData<Report[]>(() => api.reports()); const reasons: Record<string, Key> = { scam: 'rScam', illegal: 'rIllegal', spam: 'rSpam', other: 'rOther' };

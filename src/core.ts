@@ -13,8 +13,9 @@ export interface Ad {
   lat: number | null; lng: number | null; attrs: Record<string, string>; photos: string[];
   showPhone: boolean; status: Status; rejectReason?: string | null; views: number;
   topUntil?: string | null; highlightUntil?: string | null; bumpedAt: string; createdAt: string;
-  expiresAt: string; priceHistory: { at: string; price: number | null }[];
+  expiresAt: string; priceHistory: { at: string; price: number | null }[]; botNote?: string | null; modSource?: 'bot' | 'human' | 'reports' | null;
 }
+export interface BotRule { id: string; pattern: string; reason: string }
 export type AdDraft = Pick<Ad, 'title' | 'description' | 'price' | 'category' | 'subcategory' | 'city' | 'attrs' | 'photos' | 'showPhone'>;
 export interface Filter {
   q?: string; category?: string; subcategory?: string; city?: string; min?: number; max?: number;

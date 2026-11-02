@@ -184,3 +184,5 @@ kbd{font:500 11px 'Onest Variable',sans-serif;border:1px solid var(--line);borde
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 .tile:last-child{grid-column:span 2}
 .smart-row input{text-overflow:ellipsis}
+
+.rule-code{font-size:12.5px;overflow-wrap:anywhere}

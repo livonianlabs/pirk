@@ -1,6 +1,6 @@
 // One data interface, two backends: Supabase when configured, a labelled local demo otherwise.
 import { createClient } from '@supabase/supabase-js';
-import { Ad, AdDraft, AuditEntry, CATEGORIES, CITIES, Filter, Message, Price, PriceChange, Report, SavedSearch, Status, Thread, Tx, User, compressImage, strip, isTop } from './core';
+import { Ad, AdDraft, AuditEntry, CATEGORIES, CITIES, BotRule, Filter, Message, Price, PriceChange, Report, SavedSearch, Status, Thread, Tx, User, compressImage, strip, isTop } from './core';
 
 export interface Api {
   demo: boolean;
@@ -44,6 +44,11 @@ export interface Api {
   setPrice(code: string, amount: number): Promise<void>;
   audit(): Promise<AuditEntry[]>;
   adminAds(): Promise<Ad[]>;
+  botEnabled(): Promise<boolean>;
+  setBotEnabled(on: boolean): Promise<void>;
+  botRules(): Promise<BotRule[]>;
+  addBotRule(pattern: string, reason: string): Promise<void>;
+  deleteBotRule(id: string): Promise<void>;
 }
 
 const SB_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
@@ -58,7 +63,7 @@ function supabaseApi(): Api {
     id: r.id, ownerId: r.owner_id, ownerName: r.owner_name ?? r.profiles?.display_name ?? '', title: r.title, description: r.description,
     price: r.price == null ? null : Number(r.price), category: r.category, subcategory: r.subcategory, city: r.city, lat: r.lat, lng: r.lng,
     attrs: r.attrs ?? {}, photos: r.photos ?? [], showPhone: r.show_phone, status: r.status, rejectReason: r.reject_reason, views: r.views,
-    topUntil: r.top_until, highlightUntil: r.highlight_until, bumpedAt: r.bumped_at, createdAt: r.created_at, expiresAt: r.expires_at, priceHistory: r.price_history ?? [],
+    topUntil: r.top_until, highlightUntil: r.highlight_until, bumpedAt: r.bumped_at, createdAt: r.created_at, expiresAt: r.expires_at, priceHistory: r.price_history ?? [], botNote: r.bot_note, modSource: r.mod_source,
   });
   const uid = async () => { const { data } = await sb.auth.getUser(); if (!data.user) throw new Error('auth'); return data.user.id; };
   const SEL = '*, profiles(display_name)';
@@ -138,6 +143,11 @@ function supabaseApi(): Api {
     async allTx() { return (must(await sb.from('transactions').select('*, profiles(display_name)').order('created_at', { ascending: false }).limit(200)) as any[]).map((t) => ({ ...toTx(t), userName: t.profiles?.display_name })); },
     async setPrice(code, amount) { must(await sb.from('prices').update({ amount }).eq('code', code)); },
     async audit() { return (must(await sb.from('audit_log').select('*').order('created_at', { ascending: false }).limit(100)) as any[]).map((a) => ({ id: String(a.id), action: a.action, target: a.target, note: a.note, createdAt: a.created_at })); },
+    async botEnabled() { return (must(await sb.from('bot_settings').select('enabled').single()) as any).enabled; },
+    async setBotEnabled(on) { must(await sb.from('bot_settings').update({ enabled: on }).eq('id', true)); },
+    async botRules() { return (must(await sb.from('bot_rules').select('*').order('id')) as any[]).map((r) => ({ id: String(r.id), pattern: r.pattern, reason: r.reason })); },
+    async addBotRule(pattern, reason) { must(await sb.from('bot_rules').insert({ pattern, reason })); },
+    async deleteBotRule(id) { must(await sb.from('bot_rules').delete().eq('id', id)); },
     async adminAds() { return (must(await sb.from('ads').select(SEL).order('created_at', { ascending: false }).limit(500)) as any[]).map(toAd); },
   };
 }
@@ -315,6 +325,11 @@ function demoApi(): Api {
     async setPrice(code, amount) { const p = db.prices.find((x) => x.code === code)!; db.changes.unshift({ code, oldAmount: p.amount, newAmount: amount, createdAt: new Date().toISOString() }); log('price_change', code, `${p.amount} -> ${amount}`); p.amount = amount; save(); },
     audit: () => ok(db.audit),
     adminAds: () => ok(db.ads),
+    botEnabled: () => ok(false),
+    async setBotEnabled() { /* the bot runs in the database; demo mode has none */ },
+    botRules: () => ok([]),
+    async addBotRule() { /* see above */ },
+    async deleteBotRule() { /* see above */ },
   };
   return api;
 }

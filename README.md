@@ -13,7 +13,7 @@ Without Supabase settings the site runs as a clearly labelled local demo, with d
 ## Connect a real backend
 
 1. Create a Supabase project in an EU region.
-2. Run `supabase/schema.sql` in the SQL editor.
+2. Run `supabase/schema.sql`, then `supabase/002_bot.sql`, in the SQL editor.
 3. In Authentication > URL Configuration, add the site URL as an allowed redirect.
 4. Add repository variables `SUPABASE_URL` and `SUPABASE_ANON_KEY` (the anon key is public by design; never use the service key here), then redeploy.
 5. Sign in once, then make yourself admin in the SQL editor:
