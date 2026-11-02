@@ -66,7 +66,7 @@ function supabaseApi(): Api {
     topUntil: r.top_until, highlightUntil: r.highlight_until, bumpedAt: r.bumped_at, createdAt: r.created_at, expiresAt: r.expires_at, priceHistory: r.price_history ?? [], botNote: r.bot_note, modSource: r.mod_source,
   });
   const uid = async () => { const { data } = await sb.auth.getUser(); if (!data.user) throw new Error('auth'); return data.user.id; };
-  const SEL = '*, profiles(display_name)';
+  const SEL = '*, profiles!ads_owner_id_fkey(display_name)';
   return {
     demo: false,
     async me() {
