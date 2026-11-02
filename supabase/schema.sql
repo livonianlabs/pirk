@@ -1,4 +1,4 @@
--- Pirk: database schema, row-level security and RPCs (Supabase / Postgres).
+-- Pērc vai pārdod: database schema, row-level security and RPCs (Supabase / Postgres).
 -- All authorization lives here: the browser is untrusted.
 
 create type ad_status as enum ('pending','active','paused','rejected','expired','sold');

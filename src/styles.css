@@ -38,7 +38,7 @@ fieldset{border:0;padding:0;margin:0 0 14px} legend{font-size:13px;font-weight:5
 .demobar{background:var(--ink);color:var(--bg);text-align:center;font-size:12.5px;padding:5px 12px}
 .top{position:sticky;top:0;z-index:500;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(18px) saturate(1.5);border-bottom:1px solid var(--line)}
 .top-in{display:flex;align-items:center;gap:12px;height:64px}
-.logo{font-weight:800;font-size:27px;letter-spacing:-.06em;line-height:1} .logo i{color:var(--brand);font-style:normal}
+.logo{display:inline-flex;align-items:baseline;gap:.26em;font-size:23px;line-height:1;letter-spacing:-.045em;white-space:nowrap} .logo b{font-weight:800} .logo b:last-child{color:var(--brand)} .logo i{font-style:normal;font-weight:500;font-size:.62em;letter-spacing:0;color:var(--muted)}
 .cmd-btn{flex:1;max-width:360px;margin-left:12px;display:flex;justify-content:space-between;align-items:center;height:42px;padding:0 8px 0 14px;background:var(--surface);border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:14px}
 kbd{font:500 11px 'Onest Variable',sans-serif;border:1px solid var(--line);border-radius:7px;padding:3px 7px}
 .top-nav{display:flex;gap:16px;margin-left:auto;font-size:14.5px;font-weight:500}
@@ -186,3 +186,5 @@ kbd{font:500 11px 'Onest Variable',sans-serif;border:1px solid var(--line);borde
 .smart-row input{text-overflow:ellipsis}
 
 .rule-code{font-size:12.5px;overflow-wrap:anywhere}
+
+@media (max-width:680px){.logo{font-size:20px} .top-in>a:first-child{margin-right:auto}}

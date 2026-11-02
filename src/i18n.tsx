@@ -5,7 +5,7 @@ const D = {
   search: ['Meklēt, piemēram: bmw līdz 15000 rīgā', 'Поиск, например: квартира в риге до 90000'],
   searchShort: ['Meklēt', 'Найти'], post: ['Ievietot sludinājumu', 'Подать объявление'], cabinet: ['Mans kabinets', 'Мой кабинет'], admin: ['Administrēšana', 'Админка'],
   pricing: ['Cenas', 'Цены'], login: ['Ieiet', 'Войти'], logout: ['Iziet', 'Выйти'], favorites: ['Izlase', 'Избранное'], messages: ['Ziņas', 'Сообщения'], home: ['Sākums', 'Главная'], all: ['Visi sludinājumi', 'Все объявления'],
-  heroA: ['Pērc un pārdod', 'Покупай и продавай'], heroB: ['bez liekā trokšņa.', 'без лишнего шума.'],
+  heroA: ['Pērc vai pārdod', 'Покупай или продавай'], heroB: ['bez liekā trokšņa.', 'без лишнего шума.'],
   heroSub: ['Raksti, ko meklē, kā cilvēkam. Mēs saprotam cenu, pilsētu un kategoriju. Ievietot sludinājumu ir bez maksas, un visas cenas ir publiskas.', 'Пиши, что ищешь, как человеку. Мы поймём цену, город и категорию. Подать объявление бесплатно, а все цены открыты.'],
   categories: ['Kategorijas', 'Категории'], fresh: ['Jaunākie sludinājumi', 'Свежие объявления'], seeAll: ['Skatīt visus', 'Смотреть все'],
   whyA: ['Bez sīkās drukas', 'Без мелкого шрифта'], whyAt: ['Cenas ir publiskas, un katra izmaiņa redzama vēsturē.', 'Цены открыты, а каждое изменение видно в истории.'],

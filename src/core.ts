@@ -1,5 +1,5 @@
 // Brand, shared types, category tree, cities and the natural-language search parser.
-export const BRAND = { name: 'Pirk', domain: 'pirk.lv', email: 'livonianlabs@gmail.com' };
+export const BRAND = { name: 'Pērc vai pārdod', domain: 'percvaipardod.lv', email: 'livonianlabs@gmail.com' };
 // Beta: promotion is free and clearly marked. Flip when payments launch on own hosting.
 export const BETA = true;
 

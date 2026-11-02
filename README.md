@@ -1,4 +1,4 @@
-# Pirk
+# Pērc vai pārdod
 
 Latvian classifieds (LV/RU). Vite + React + TypeScript on the front end, Supabase (Postgres, auth, storage) behind it.
 Without Supabase settings the site runs as a clearly labelled local demo, with data kept only in the visitor's browser.

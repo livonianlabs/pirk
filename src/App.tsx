@@ -83,6 +83,8 @@ function CommandPalette({ open, close }: { open: boolean; close: () => void }) {
   );
 }
 
+const Logo = () => <span className="logo"><b>pērc</b><i>vai</i><b>pārdod</b></span>;
+
 function Shell({ children }: { children: React.ReactNode }) {
   const { t, lang } = useT(); const { setLang } = useContext(LangCtx); const { user } = useApp(); const loc = useLocation();
   const [dark, setDark] = useState(() => localStorage.getItem('pirk-theme') === 'dark' || (!localStorage.getItem('pirk-theme') && matchMedia('(prefers-color-scheme: dark)').matches));
@@ -94,7 +96,7 @@ function Shell({ children }: { children: React.ReactNode }) {
     <>
       {api.demo && <div className="demobar">{t('demoBar')}</div>}
       <header className="top"><div className="wrap top-in">
-        <Link to="/" className="logo" aria-label={BRAND.name}>pirk<i>.</i></Link>
+        <Link to="/" aria-label={BRAND.name}><Logo /></Link>
         <button className="cmd-btn" onClick={() => setCmd(true)}><span>⌕ {t('searchShort')}…</span><kbd>Ctrl K</kbd></button>
         <nav className="top-nav">
           <NavLink to="/pricing">{t('pricing')}</NavLink>
@@ -107,7 +109,7 @@ function Shell({ children }: { children: React.ReactNode }) {
       </div></header>
       <main>{children}</main>
       <footer className="foot"><div className="wrap foot-in">
-        <div><span className="logo">pirk<i>.</i></span><p className="muted">© 2026 Livonian Labs, Riga, Latvia · <a href={`mailto:${BRAND.email}`}>{BRAND.email}</a></p></div>
+        <div><Logo /><p className="muted">© 2026 Livonian Labs, Riga, Latvia · <a href={`mailto:${BRAND.email}`}>{BRAND.email}</a></p></div>
         <nav><Link to="/pricing">{t('pricing')}</Link><Link to="/terms">{t('terms')}</Link><Link to="/privacy">{t('privacy')}</Link></nav>
       </div></footer>
       <nav className="tabbar" aria-label="Mobile">
@@ -215,7 +217,7 @@ function AdPage() {
   const { data: peers } = useAsync(() => ad ? api.search({ subcategory: ad.subcategory, category: ad.category, limit: 100 }) : Promise.resolve({ total: 0, items: [] as Ad[] }), [ad?.id]);
   const [phone, setPhone] = useState<string | null>(null); const [idx, setIdx] = useState(0); const [rep, setRep] = useState(false);
   const viewed = useRef('');
-  useEffect(() => { if (ad && viewed.current !== ad.id) { viewed.current = ad.id; api.addView(ad.id); document.title = `${ad.title} · ${BRAND.name}`; } setPhone(null); setIdx(0); return () => { document.title = 'Pirk'; }; }, [ad]);
+  useEffect(() => { if (ad && viewed.current !== ad.id) { viewed.current = ad.id; api.addView(ad.id); document.title = `${ad.title} · ${BRAND.name}`; } setPhone(null); setIdx(0); return () => { document.title = BRAND.name; }; }, [ad]);
   if (error) return <div className="wrap"><Empty title={t('error')} /></div>;
   if (!res) return <div className="wrap sec"><div className="skeleton tall" /></div>;
   if (!ad) return <div className="wrap"><Empty title={t('notFound')}><Link className="btn btn-primary" to="/browse">{t('all')}</Link></Empty></div>;
@@ -356,7 +358,7 @@ function Pricing() {
 }
 
 const LEGAL = {
-  terms: { lv: ['Lietošanas noteikumi (melnraksts)', ['Pirk ir sludinājumu platforma: mēs nepiedalāmies darījumos starp pircējiem un pārdevējiem un negarantējam preču kvalitāti.', 'Aizliegts publicēt nelegālas preces, viltojumus, krāpnieciskus vai citu tiesības pārkāpjošus sludinājumus.', 'Sludinājumus automātiski pārbauda bots, kas izvērtē tekstu un cenu un šaubu gadījumā nodod tos cilvēkam. Bots pats neko nenoraida. Noraidīšanas gadījumā norādām iemeslu, un to var labot un iesniegt atkārtoti. Sludinājums ar vairākām sūdzībām tiek paslēpts līdz pārbaudei.', 'Par pārkāpumu var ziņot ar pogu katrā sludinājumā. Pārkāpēju kontus varam bloķēt.', 'Sludinājums ir aktīvs 60 dienas. Beta laikā visi pakalpojumi ir bez maksas.']], ru: ['Правила использования (черновик)', ['Pirk — площадка объявлений: мы не участвуем в сделках между покупателями и продавцами и не гарантируем качество товаров.', 'Запрещено публиковать незаконные товары, подделки, мошеннические объявления и объявления, нарушающие чужие права.', 'Объявления автоматически проверяет бот: он оценивает текст и цену и при сомнениях передаёт их человеку. Сам бот ничего не отклоняет. При отказе мы указываем причину, объявление можно исправить и подать повторно. Объявление с несколькими жалобами скрывается до проверки.', 'Сообщить о нарушении можно кнопкой в каждом объявлении. Аккаунты нарушителей могут быть заблокированы.', 'Объявление активно 60 дней. В бета-период все услуги бесплатны.']] },
+  terms: { lv: ['Lietošanas noteikumi (melnraksts)', ['Pērc vai pārdod ir sludinājumu platforma: mēs nepiedalāmies darījumos starp pircējiem un pārdevējiem un negarantējam preču kvalitāti.', 'Aizliegts publicēt nelegālas preces, viltojumus, krāpnieciskus vai citu tiesības pārkāpjošus sludinājumus.', 'Sludinājumus automātiski pārbauda bots, kas izvērtē tekstu un cenu un šaubu gadījumā nodod tos cilvēkam. Bots pats neko nenoraida. Noraidīšanas gadījumā norādām iemeslu, un to var labot un iesniegt atkārtoti. Sludinājums ar vairākām sūdzībām tiek paslēpts līdz pārbaudei.', 'Par pārkāpumu var ziņot ar pogu katrā sludinājumā. Pārkāpēju kontus varam bloķēt.', 'Sludinājums ir aktīvs 60 dienas. Beta laikā visi pakalpojumi ir bez maksas.']], ru: ['Правила использования (черновик)', ['Pērc vai pārdod — площадка объявлений: мы не участвуем в сделках между покупателями и продавцами и не гарантируем качество товаров.', 'Запрещено публиковать незаконные товары, подделки, мошеннические объявления и объявления, нарушающие чужие права.', 'Объявления автоматически проверяет бот: он оценивает текст и цену и при сомнениях передаёт их человеку. Сам бот ничего не отклоняет. При отказе мы указываем причину, объявление можно исправить и подать повторно. Объявление с несколькими жалобами скрывается до проверки.', 'Сообщить о нарушении можно кнопкой в каждом объявлении. Аккаунты нарушителей могут быть заблокированы.', 'Объявление активно 60 дней. В бета-период все услуги бесплатны.']] },
   privacy: { lv: ['Privātuma politika (melnraksts)', ['Glabājam e-pastu, profila datus, sludinājumus, ziņas un (ja norādīts) tālruni, lai nodrošinātu pakalpojumu.', 'Tālrunis ir redzams tikai pieslēgtiem lietotājiem un tikai tad, ja to atļauj sludinājumā.', 'Nelietojam reklāmas sīkdatnes. Pieteikšanās sesija tiek glabāta tavā pārlūkā. Karšu attēli tiek ielādēti no OpenStreetMap, kas redz tavu IP adresi.', 'Vari lejupielādēt savus datus kabinetā un pieprasīt to dzēšanu, rakstot uz kontaktu e-pastu.']], ru: ['Политика конфиденциальности (черновик)', ['Мы храним e-mail, данные профиля, объявления, сообщения и (если указан) телефон, чтобы предоставлять сервис.', 'Телефон виден только вошедшим пользователям и только если это разрешено в объявлении.', 'Мы не используем рекламные cookie. Сессия входа хранится в твоём браузере. Изображения карты загружаются с OpenStreetMap, который видит твой IP-адрес.', 'Свои данные можно скачать в кабинете и запросить их удаление, написав на контактный e-mail.']] },
 } as const;
 function Legal({ doc }: { doc: 'terms' | 'privacy' }) { const { lang } = useT(); const [h, items] = LEGAL[doc][lang]; return <div className="wrap sec legal"><h1>{h}</h1><ol>{items.map((x) => <li key={x}>{x}</li>)}</ol></div>; }
@@ -383,7 +385,7 @@ export default function App() {
             <Route path="/post" element={<Post />} /><Route path="/post/:id" element={<Post />} />
             <Route path="/cabinet/*" element={<Cabinet />} /><Route path="/admin/*" element={<Admin />} />
             <Route path="/pricing" element={<Pricing />} /><Route path="/terms" element={<Legal doc="terms" />} /><Route path="/privacy" element={<Legal doc="privacy" />} />
-            <Route path="*" element={<div className="wrap"><Empty title="404"><Link className="btn btn-primary" to="/">Pirk</Link></Empty></div>} />
+            <Route path="*" element={<div className="wrap"><Empty title="404"><Link className="btn btn-primary" to="/">{BRAND.name}</Link></Empty></div>} />
           </Routes></Shell>
         </BrowserRouter>
         {msg && <div className="toast" role="status">{msg}</div>}
