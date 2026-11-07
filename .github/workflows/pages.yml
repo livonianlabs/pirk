@@ -1,10 +1,14 @@
-name: Deploy to GitHub Pages
+name: Check and redirect
+# The site is built and hosted by Cloudflare Pages on every push to main.
+# This workflow only runs the database tests and a build check, and keeps the old
+# GitHub Pages address alive as a redirect to the new host.
 on:
   push: { branches: [main] }
+  pull_request:
   workflow_dispatch:
 permissions: { contents: read, pages: write, id-token: write }
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,13 +18,16 @@ jobs:
       - run: npm run test:db
       - run: npm run build
         env:
-          BASE_PATH: ${{ vars.BASE_PATH || format('/{0}/', github.event.repository.name) }}
           VITE_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
-      - uses: actions/upload-pages-artifact@v3
-        with: { path: dist }
-  deploy:
-    needs: build
+      - if: github.event_name != 'pull_request'
+        run: mkdir redirect && cp .github/redirect/index.html redirect/index.html && cp .github/redirect/index.html redirect/404.html
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with: { path: redirect }
+  redirect:
+    if: github.event_name != 'pull_request'
+    needs: check
     runs-on: ubuntu-latest
     environment: { name: github-pages, url: '${{ steps.d.outputs.page_url }}' }
     steps:
